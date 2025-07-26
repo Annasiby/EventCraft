@@ -6,8 +6,10 @@ export default function Portfolio() {
   const [events, setEvents] = useState([]);
   const [filter, setFilter] = useState('All');
   const [filteredEvents, setFilteredEvents] = useState([]);
+  const [statusFilter, setStatusFilter] = useState('All'); // All, Upcoming, Completed
 
-  const categories = ['All', 'Wedding', 'Corporate', 'Birthday', 'Anniversary', 'Other'];
+  const categories = ['All', 'Wedding', 'Corporate Event', 'Birthday Party', 'Anniversary', 'Conference', 'Product Launch', 'Other'];
+  const statusOptions = ['All', 'Upcoming', 'Completed'];
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -17,38 +19,64 @@ export default function Portfolio() {
           id: doc.id,
           ...doc.data()
         }));
-        setEvents(eventsData);
-        setFilteredEvents(eventsData);
+        
+        // Update event statuses based on current date
+        const updatedEvents = eventsData.map(event => {
+          const eventDate = new Date(event.date);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0); // Reset time to start of day
+          
+          // If event date is in the past and status is 'Upcoming', mark as 'Completed'
+          if (eventDate < today && event.status === 'Upcoming') {
+            return { ...event, status: 'Completed' };
+          }
+          // If event date is in the future and no status, mark as 'Upcoming'
+          else if (eventDate > today && !event.status) {
+            return { ...event, status: 'Upcoming' };
+          }
+          // If event date is in the past and no status, mark as 'Completed'
+          else if (eventDate < today && !event.status) {
+            return { ...event, status: 'Completed' };
+          }
+          return event;
+        });
+        
+        setEvents(updatedEvents);
+        setFilteredEvents(updatedEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
         // Fallback data if Firebase is not set up yet
         const fallbackEvents = [
+          // COMPLETED EVENTS (Past dates)
           {
             id: 1,
             title: 'Romantic Garden Wedding',
             category: 'Wedding',
             description: 'An intimate wedding ceremony in a beautiful garden setting with 100 guests.',
             image: 'https://images.pexels.com/photos/1444442/pexels-photo-1444442.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
-            date: '2024-06-15',
-            guests: 100
+            date: '2023-06-15',
+            guests: 100,
+            status: 'Completed'
           },
           {
             id: 2,
             title: 'Corporate Annual Gala',
-            category: 'Corporate',
+            category: 'Corporate Event',
             description: 'A sophisticated corporate gala dinner for 200 executives and employees.',
             image: 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
-            date: '2024-05-20',
-            guests: 200
+            date: '2023-05-20',
+            guests: 200,
+            status: 'Completed'
           },
           {
             id: 3,
             title: 'Sweet 16 Birthday Bash',
-            category: 'Birthday',
+            category: 'Birthday Party',
             description: 'A fun and vibrant Sweet 16 birthday party with themed decorations.',
             image: 'https://images.pexels.com/photos/1587927/pexels-photo-1587927.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
-            date: '2024-04-10',
-            guests: 50
+            date: '2023-04-10',
+            guests: 50,
+            status: 'Completed'
           },
           {
             id: 4,
@@ -56,17 +84,19 @@ export default function Portfolio() {
             category: 'Anniversary',
             description: 'A golden wedding anniversary celebration for a lovely couple.',
             image: 'https://images.pexels.com/photos/1729797/pexels-photo-1729797.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
-            date: '2024-03-22',
-            guests: 75
+            date: '2023-03-22',
+            guests: 75,
+            status: 'Completed'
           },
           {
             id: 5,
             title: 'Product Launch Event',
-            category: 'Corporate',
+            category: 'Product Launch',
             description: 'An exciting product launch event with interactive demonstrations.',
             image: 'https://images.pexels.com/photos/2608517/pexels-photo-2608517.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
-            date: '2024-07-08',
-            guests: 150
+            date: '2023-07-08',
+            guests: 150,
+            status: 'Completed'
           },
           {
             id: 6,
@@ -74,26 +104,60 @@ export default function Portfolio() {
             category: 'Wedding',
             description: 'A stunning beachside wedding ceremony at sunset.',
             image: 'https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
-            date: '2024-08-12',
-            guests: 80
+            date: '2023-08-12',
+            guests: 80,
+            status: 'Completed'
           },
           {
             id: 7,
             title: 'Milestone Birthday Party',
-            category: 'Birthday',
+            category: 'Birthday Party',
             description: 'A milestone 50th birthday party with elegant decorations.',
             image: 'https://images.pexels.com/photos/1679618/pexels-photo-1679618.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
-            date: '2024-02-14',
-            guests: 60
+            date: '2023-02-14',
+            guests: 60,
+            status: 'Completed'
           },
           {
             id: 8,
             title: 'Tech Conference',
-            category: 'Corporate',
+            category: 'Conference',
             description: 'A three-day technology conference with multiple speakers.',
             image: 'https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
-            date: '2024-09-05',
-            guests: 300
+            date: '2023-09-05',
+            guests: 300,
+            status: 'Completed'
+          },
+          // UPCOMING EVENTS (Future dates)
+          {
+            id: 9,
+            title: 'Summer Wedding Celebration',
+            category: 'Wedding',
+            description: 'A beautiful summer wedding with outdoor ceremony and reception.',
+            image: 'https://images.pexels.com/photos/1444442/pexels-photo-1444442.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
+            date: '2024-07-15',
+            guests: 120,
+            status: 'Upcoming'
+          },
+          {
+            id: 10,
+            title: 'Corporate Team Building',
+            category: 'Corporate Event',
+            description: 'Annual team building event with outdoor activities and workshops.',
+            image: 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
+            date: '2024-08-20',
+            guests: 80,
+            status: 'Upcoming'
+          },
+          {
+            id: 11,
+            title: 'Children\'s Birthday Party',
+            category: 'Birthday Party',
+            description: 'A magical children\'s birthday party with entertainment and games.',
+            image: 'https://images.pexels.com/photos/1587927/pexels-photo-1587927.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
+            date: '2024-09-10',
+            guests: 30,
+            status: 'Upcoming'
           }
         ];
         setEvents(fallbackEvents);
@@ -105,11 +169,14 @@ export default function Portfolio() {
   }, []);
 
   useEffect(() => {
-    if (filter === 'All') {
-      setFilteredEvents(events);
-    } else {
-      setFilteredEvents(events.filter(event => event.category === filter));
+    let filtered = events;
+
+    // Filter by category only
+    if (filter !== 'All') {
+      filtered = filtered.filter(event => event.category === filter);
     }
+
+    setFilteredEvents(filtered);
   }, [filter, events]);
 
   return (
@@ -172,14 +239,20 @@ export default function Portfolio() {
                         {event.category}
                       </span>
                     </div>
+                    <div className="absolute top-4 right-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        event.status === 'Completed' 
+                          ? 'bg-green-600 text-white' 
+                          : 'bg-yellow-500 text-white'
+                      }`}>
+                        {event.status}
+                      </span>
+                    </div>
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
                       {event.title}
                     </h3>
-                    <p className="text-gray-600 mb-4">
-                      {event.description}
-                    </p>
                     <div className="flex items-center justify-between text-sm text-gray-500">
                       <span>Guests: {event.guests}</span>
                       <span>{new Date(event.date).toLocaleDateString()}</span>
@@ -195,10 +268,18 @@ export default function Portfolio() {
       {/* Stats Section */}
       <section className="py-20 bg-indigo-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl font-bold text-white mb-2">{events.length}+</div>
+              <div className="text-4xl font-bold text-white mb-2">
+                {events.filter(event => event.status === 'Completed').length}+
+              </div>
               <div className="text-indigo-200">Events Completed</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-white mb-2">
+                {events.filter(event => event.status === 'Upcoming').length}
+              </div>
+              <div className="text-indigo-200">Upcoming Events</div>
             </div>
             <div>
               <div className="text-4xl font-bold text-white mb-2">98%</div>

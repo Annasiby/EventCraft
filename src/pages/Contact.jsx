@@ -18,9 +18,21 @@ export default function Contact() {
   const [submitStatus, setSubmitStatus] = useState(null);
 
   const handleChange = (e) => {
+    let value = e.target.value;
+    
+    // Special handling for guests field to ensure proper number handling
+    if (e.target.name === 'guests') {
+      // Remove any non-numeric characters except digits
+      value = value.replace(/[^0-9]/g, '');
+      // Ensure it's a positive number
+      if (value && parseInt(value) < 1) {
+        value = '1';
+      }
+    }
+    
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: value
     });
   };
 
@@ -29,11 +41,44 @@ export default function Contact() {
     setIsSubmitting(true);
     
     try {
+      // Debug: Log the guests value
+      console.log('Original guests value:', formData.guests);
+      console.log('Type of guests value:', typeof formData.guests);
+      console.log('Parsed guests value:', parseInt(formData.guests, 10));
+      
+      // Ensure guests is a valid number
+      const guestsNumber = parseInt(formData.guests, 10);
+      if (isNaN(guestsNumber)) {
+        console.error('Invalid guests number:', formData.guests);
+      }
+      console.log('Final guests number to be saved:', guestsNumber);
+      
+      // Add contact form submission
       await addDoc(collection(db, 'contacts'), {
         ...formData,
         createdAt: new Date(),
         status: 'new'
       });
+
+      // Also create an event entry for the portfolio
+      const eventData = {
+        title: `${formData.eventType} - ${formData.name}`,
+        description: formData.message || `Event planned for ${formData.eventType}`,
+        category: formData.eventType,
+        date: formData.eventDate || new Date().toISOString().split('T')[0],
+        guests: guestsNumber || 0,
+        venue: 'TBD',
+        budget: formData.budget || 'Not specified',
+        featured: false,
+        status: 'Upcoming', // Mark new events as upcoming
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: 'contact-form',
+        image: getDefaultImageForEventType(formData.eventType)
+      };
+
+      await addDoc(collection(db, 'events'), eventData);
+
       setSubmitStatus('success');
       setFormData({
         name: '',
@@ -51,6 +96,20 @@ export default function Contact() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Helper function to get default image based on event type
+  const getDefaultImageForEventType = (eventType) => {
+    const imageMap = {
+      'Wedding': 'https://images.pexels.com/photos/1444442/pexels-photo-1444442.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
+      'Corporate Event': 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
+      'Birthday Party': 'https://images.pexels.com/photos/1587927/pexels-photo-1587927.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
+      'Anniversary': 'https://images.pexels.com/photos/1729797/pexels-photo-1729797.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
+      'Conference': 'https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
+      'Product Launch': 'https://images.pexels.com/photos/2608517/pexels-photo-2608517.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2',
+      'Other': 'https://images.pexels.com/photos/1679618/pexels-photo-1679618.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=2'
+    };
+    return imageMap[eventType] || imageMap['Other'];
   };
 
   const eventTypes = [
@@ -254,6 +313,8 @@ export default function Contact() {
                       type="number"
                       id="guests"
                       name="guests"
+                      min="1"
+                      max="1000"
                       value={formData.guests}
                       onChange={handleChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
