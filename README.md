@@ -62,13 +62,17 @@ const firebaseConfig = {
 ## Home Page
 
 ![Home Page](screenshots/home1.png)
+
 ![Home Page](screenshots/home2.png)
+
 ![Home Page](screenshots/home3.png)
+
 ![Home Page](screenshots/home4.png)
 
 ## About Us
 
 ![About Us](screenshots/Aboutus1.png)
+
 ![About Us](screenshots/Aboutus2.png)
 
 ## Portfolio
