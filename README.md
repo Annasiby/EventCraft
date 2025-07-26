@@ -59,11 +59,6 @@ const firebaseConfig = {
 
 ## Screenshots
 
-Create a `screenshots/` folder in your project root and add your images there.
-
-Example:
-
-```markdown
 ## Home Page
 
 ![Home Page](screenshots/home1.png)
