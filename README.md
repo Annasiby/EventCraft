@@ -77,9 +77,9 @@ const firebaseConfig = {
 ## Sign up
 
 ![Login](screenshots/signup.png)
-```
 
----
+
+
 
 ## Folder Structure
 
@@ -97,4 +97,4 @@ src/
 
 ## License
 
-MIT
+Made for Learning purpose....
