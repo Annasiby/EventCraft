@@ -128,7 +128,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Address</h3>
-                    <p className="text-gray-600">123 Event Street<br />New York, NY 10001</p>
+                    <p className="text-gray-600">123 Event Street<br />New York</p>
                   </div>
                 </div>
 

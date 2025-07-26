@@ -77,7 +77,16 @@ const firebaseConfig = {
 
 ## Portfolio
 
-![Portfolio](screenshots/portfolio.png)
+![Portfolio](screenshots/portfolio1.png)
+
+## Contact
+
+![Contact](screenshots/Contact1.png)
+
+![Contact](screenshots/Contact2.png)
+
+![Contact](screenshots/Contact3.png)
+
 
 ## Login
 
