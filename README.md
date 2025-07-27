@@ -42,18 +42,25 @@ The app will be available at [http://localhost:5173](http://localhost:5173) (or 
 
 1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com/).
 2. Enable Authentication and Firestore (see `FIRESTORE_SETUP.md` for detailed steps and schema).
-3. Copy your Firebase config into `src/firebase/config.js`:
+3. Copy the template file and add your credentials:
+   ```bash
+   cp src/firebase/config.template.js src/firebase/config.js
+   ```
+4. Replace the placeholder values in `src/firebase/config.js` with your actual Firebase credentials:
 
 ```js
 const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "your-project-id.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project-id.appspot.com",
-  messagingSenderId: "your-messaging-sender-id",
-  appId: "your-app-id"
+  apiKey: "your-actual-api-key",
+  authDomain: "your-actual-project-id.firebaseapp.com",
+  projectId: "your-actual-project-id",
+  storageBucket: "your-actual-project-id.appspot.com",
+  messagingSenderId: "your-actual-messaging-sender-id",
+  appId: "your-actual-app-id",
+  measurementId: "your-actual-measurement-id"
 };
 ```
+
+**Note**: The `config.js` file is ignored by Git to protect your credentials. Use the template file as a reference.
 
 ---
 
