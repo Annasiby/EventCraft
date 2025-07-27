@@ -82,9 +82,7 @@ const firebaseConfig = {
 
 ![About Us](screenshots/Aboutus2.png)
 
-## Portfolio
 
-![Portfolio](screenshots/portfolio1.png)
 
 ## Contact
 
